@@ -1,0 +1,112 @@
+﻿<src:MetroWindow x:Class="AntMeBattleArena_Server.MainWindow"
+        xmlns:src="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AntMeBattleArena_Server"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        Title="FHDW AntMe! Battle Arena" Height="480" Width="900" Background="#21376A" GlowBrush="{DynamicResource AccentColorBrush}" Loaded="MetroWindow_Loaded">
+    <Window.Resources>
+        <local:FontSizeConverter x:Key="fontSizeCon" />
+    </Window.Resources>
+    <Grid Margin="5,5,5,5" Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="8*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="8*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="8*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="67*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Viewbox Grid.Column="1" Grid.ColumnSpan="2">
+            <TextBlock TextWrapping="Wrap" Text="Server: 192.186.0.1:1337" HorizontalAlignment="Center" />
+        </Viewbox>
+
+        <Image Grid.Column="4" Grid.RowSpan="3" Source="Assets/FHDW_Logo_RGB.jpg" Margin="5,15,10,0" />
+
+        <Grid Grid.Row="2" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0,4*" />
+                <ColumnDefinition Width="0,6*" />
+            </Grid.ColumnDefinitions>
+            <TextBox Margin="5,5,5,5" Name="TimerTextBox" AcceptsReturn="False" HorizontalScrollBarVisibility="Disabled" TextWrapping="NoWrap" VerticalContentAlignment="Center" HorizontalAlignment="Stretch"
+                FontSize="{Binding Path=ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}, Converter={StaticResource fontSizeCon}}"
+                     PreviewTextInput="NumberOnly_PreviewTextInput" DataObject.Pasting="NumberOnly_Pasting" TextAlignment="Center" />
+            <Viewbox Grid.Column="1" HorizontalAlignment="Stretch">
+                <Button Name="TimerButton" Content="Timer starten" Padding="5,5,5,5" HorizontalAlignment="Stretch" Click="TimerButton_Click" />
+            </Viewbox>
+        </Grid>
+        
+        <Viewbox Grid.Row="2" Grid.Column="1"  HorizontalAlignment="Stretch">
+            <Button  Content="Einstellungen" Padding="5,5,5,5" HorizontalAlignment="Stretch"  />
+        </Viewbox>
+        <Viewbox Grid.Row="2" Grid.Column="2"  HorizontalAlignment="Stretch">
+            <Button  Content="Spiel starten" Padding="5,5,5,5" HorizontalAlignment="Stretch" />
+        </Viewbox>
+        
+        <Viewbox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch">
+            <TextBlock TextWrapping="Wrap" Text="{Binding TimeString}" />
+        </Viewbox>
+
+        <DataGrid Margin="5" Name="PlayerView" Grid.Row="6" Grid.ColumnSpan="4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" ClipToBounds="True" RowHeight="50" SelectionMode="Extended" ItemsSource="{Binding Path=., Mode=OneWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}">
+        <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="FontSize" Value="18"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Ameisenvolk" Width="*" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Viewbox Margin="5">
+                                <TextBlock TextWrapping="Wrap" Text="{Binding Name}" />
+                            </Viewbox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Spieler/Team" Width="*" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Viewbox Margin="5">
+                                <TextBlock TextWrapping="Wrap" Text="{Binding PlayerName}" />
+                            </Viewbox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Statisch" Width="*" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Viewbox Margin="15">
+                                <CheckBox IsChecked="{Binding Static}" IsHitTestVisible="False" Focusable="False"/>
+                            </Viewbox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Aktualisiert um" Width="*" IsReadOnly="True" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Viewbox Margin="5">
+                                <TextBlock TextWrapping="Wrap" Text="{Binding LastUpdated}" />
+                            </Viewbox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</src:MetroWindow>
