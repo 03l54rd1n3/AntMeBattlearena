@@ -129,21 +129,19 @@ namespace AntMeBattleArena_Server
             await HandleFiles();
         }
 
-        private async void Fsw_Created(object sender, FileSystemEventArgs e)
+        private async void Fsw_Created(object sender, FileSystemEventArgs e) // Registrierte neue Datei in Uploadordner
         {
             try
             {
-                if (DateTime.Now.Subtract(fswTick).TotalMilliseconds > 1000)
+                if (DateTime.Now.Subtract(fswTick).TotalMilliseconds > 1000) // Mindestwartezeit für Created-Event
                 {
                     fswTick = DateTime.Now;
 
                     string fileName = e.FullPath;
                     FileInfo createdFile = new FileInfo(fileName);
-                    vm.IncomingFiles.Add(createdFile);
-                    //Delay is given to the thread for avoiding same process to be repeated
-                    System.Threading.Thread.Sleep(100);
+                    vm.IncomingFiles.Add(createdFile); // Hinzufügen zur Abarbeitungsliste
 
-                    await HandleFiles();
+                    System.Threading.Thread.Sleep(100);
                 }
             }
             catch (Exception ex)
@@ -176,9 +174,9 @@ namespace AntMeBattleArena_Server
             return false;
         }
 
-        private async Task HandleFiles()
+        private async Task HandleFiles() // Asynchrones Abarbeiten der erkannten Dateien
         {
-            for(int i = 0; i < vm.IncomingFiles.Count; i++)
+            for(int i = 0; i < vm.IncomingFiles.Count; i++) // Alle Dateien iterieren, die seit dem letzten Durchlauf erkannt wurden
             {
                 FileInfo file = vm.IncomingFiles[i];
                 if (!IsFileLocked(file))
@@ -188,7 +186,7 @@ namespace AntMeBattleArena_Server
                     string new_location = System.IO.Path.Combine(path.FullName, file.Name);
                     try
                     {
-                        var content = Tech.GetAntsFromAssembly(file.FullName);
+                        var content = Tech.GetAntsFromAssembly(file.FullName); // DLL Informationen abrufen
                         if(content.Count > 0)
                         {
                             if (File.Exists(new_location))
@@ -201,27 +199,27 @@ namespace AntMeBattleArena_Server
                                 File.Delete(new_location);
                             }
 
-                            File.Move(file.FullName, new_location);
+                            File.Move(file.FullName, new_location); // An interne Position verschieben
                             File.SetAttributes(new_location, FileAttributes.Normal);
 
-                            foreach (var new_ in content)
+                            foreach (var new_ in content) // Alle Völker aus der DLL iterieren
                             {
                                 try
                                 {
-                                    bool found = false;
+                                    bool found = false; // Falls bestehendes Volk -> Update
                                     foreach (var player in vm.Players)
                                     {
-                                        if (new_.Guid == player.Guid)
+                                        if (new_.Guid == player.Guid) // Duplikat-Check
                                         {
                                             player.Apply(new_, new string[] { new_location });
                                             found = true;
                                             break;
                                         }
                                     }
-                                    if (!found)
+                                    if (!found) // Falls nicht bestehendes Volk -> neu anlegen
                                     {
                                         vm.Players.Add(new ViewModels.PlayerViewModel(new_, new string[] { new_location }));
-                                        vm.RaisePropertyChanged("Players");
+                                        vm.RaisePropertyChanged("Players"); // UI-Update
                                     }
                                     PlayerView.Items.Refresh();
                                 } catch { }

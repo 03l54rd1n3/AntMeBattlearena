@@ -12,6 +12,7 @@ namespace AntMeBattleArena_Server
     {
         public static List<PlayerInfo> GetAntsFromAssembly(string filename)
         {
+            // Klassen, die Spielerinfos enthalten
             var languageBases = new List<Type>();
             languageBases.Add(
                 typeof(AntMe.Deutsch.Basisameise));
@@ -22,9 +23,12 @@ namespace AntMeBattleArena_Server
 
             try
             {
+                // DLL laden
                 Assembly assembly = Assembly.LoadFile(filename);
                 Type[] types;
 
+                // Enthaltene Klassen möglichst fehlerfrei auslesen
+                // Stets unsicher, da die DLL zur Laufzeit analysiert wird
                 try
                 {
                     types = assembly.GetTypes();
@@ -36,10 +40,12 @@ namespace AntMeBattleArena_Server
 
                 foreach (Type t in types)
                 {
+                    // Alle Klassen auf mögliche Spieler prüfen
                     if (languageBases.Contains(t.BaseType))
                     {
                         try
                         {
+                            // Simulations-DLL liest Attribute aus
                             result.Add(AiAnalysis.FindPlayerInformation(filename, t.FullName));
                         }
                         catch { }
